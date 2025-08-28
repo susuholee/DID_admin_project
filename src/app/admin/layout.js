@@ -1,7 +1,6 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Sidebar from '@/components/layout/Sidebar';
 import './globals.css';
@@ -21,7 +20,6 @@ export default function RootLayout({ children }) {
           <div className="flex min-h-screen">
             <Sidebar />
             <div className="flex flex-col flex-1">
-              <Header />
               <main className="flex-1">{children}</main>
               <Footer />
             </div>

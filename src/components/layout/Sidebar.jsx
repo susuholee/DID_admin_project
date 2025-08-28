@@ -120,29 +120,25 @@ export default function Sidebar() {
     {
       title: '대시보드',
       items: [
-        { href: '/dashboard', label: '내 관리 현황' }
-      ]
-    },
-    {
-      title: '수료증 발급',
-      items: [
-        { href: '/admin/issue-certificate', label: '새 수료증 발급' },
-        { href: '/admin/bulk-issue', label: '대량 발급' }
+        { href: '/admin/dashboard', label: '대시보드' }
       ]
     },
     {
       title: '수료증 관리',
       items: [
-        { href: '/admin/my-certificates', label: '발급한 수료증' },
-        { href: '/admin/pending-requests', label: '발급 요청 처리' },
-        { href: '/admin/certificate-history', label: '발급 이력' }
+        { href: '/admin/certificates/request', label: '수료증 요청 목록' }
+      ]
+    },
+    {
+      title: '사용자 관리',
+      items: [
+        { href: '/admin/users', label: '사용자 정보 이력' }
       ]
     },
     {
       title: '계정 관리',
       items: [
-        { href: '/admin/profile', label: '프로필 설정' },
-        { href: '/admin/notifications', label: '알림 설정' }
+        { href: '/admin/profile', label: '내 정보' }
       ]
     }
   ];
@@ -233,7 +229,7 @@ export default function Sidebar() {
         )}
 
         {/* 메뉴 네비게이션 */}
-        <nav className="p-4">
+        <nav className="p-4 pb-20">
           {menus.map((section, sectionIndex) => (
             <div key={sectionIndex} className="mb-6">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
@@ -265,19 +261,16 @@ export default function Sidebar() {
           ))}
         </nav>
 
-        {/* 하단 로그아웃 버튼 (모바일에서만) */}
-        <div className="lg:hidden absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200">
+        {/* 하단 로그아웃 버튼 */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200">
           <button
             onClick={() => {
               localStorage.removeItem('currentAdmin');
-              window.location.href = '/login';
+              window.location.href = '/admin';
             }}
             className="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
           >
-            <div className="w-4 h-4 mr-2 relative">
-              <div className="absolute left-0 top-1/2 w-3 h-0.5 bg-red-600 transform -translate-y-1/2"></div>
-              <div className="absolute right-0 top-1/3 w-1.5 h-0.5 bg-red-600 transform rotate-45"></div>
-              <div className="absolute right-0 bottom-1/3 w-1.5 h-0.5 bg-red-600 transform -rotate-45"></div>
+            <div className="w-3 h-3 mr-2 relative">
             </div>
             로그아웃
           </button>
