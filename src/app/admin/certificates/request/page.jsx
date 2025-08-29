@@ -482,7 +482,7 @@ export default function AdminCertificateRequestsPage() {
     setWarningMessage('');
   };
 
-  // 요청 처리 확정 - 처리된 요청은 목록에서 제거
+ // 요청 처리 확정 - 처리된 요청은 목록에서 제거하고 대시보드용 기록 저장
   const confirmProcessRequest = () => {
     if (!requestToProcess) return;
 
@@ -492,15 +492,36 @@ export default function AdminCertificateRequestsPage() {
       return;
     }
 
-    // 승인일 때는 바로 처리, 거절일 때는 사유와 함께 처리
-    if (processType === 'approve') {
-      // 승인 - 바로 처리
-      if (requestToProcess.requestType === 'issue') {
-        setIssueRequests((prev) => prev.filter((req) => req.id !== requestToProcess.id));
-      } else {
-        setRevokeRequests((prev) => prev.filter((req) => req.id !== requestToProcess.id));
-      }
+    const processedAt = new Date().toISOString();
+    const action = processType === 'approve' ? 'approved' : 'rejected';
 
+    // 처리된 요청 정보를 대시보드용으로 저장
+    const processedRequest = {
+      ...requestToProcess,
+      action: action,
+      processedAt: processedAt,
+      processReason: processType === 'reject' ? processReason : null,
+      processedBy: user?.name || user?.nickname || '관리자'
+    };
+
+    // 기존 처리된 요청 목록 가져오기
+    const existingProcessed = JSON.parse(localStorage.getItem('admin_processed_requests') || '[]');
+    
+    // 새로운 처리된 요청을 맨 앞에 추가
+    const updatedProcessed = [processedRequest, ...existingProcessed];
+    
+    // 로컬스토리지에 저장 (최대 50개까지만 보관)
+    localStorage.setItem('admin_processed_requests', JSON.stringify(updatedProcessed.slice(0, 50)));
+
+    // 기존 대기중 목록에서 제거
+    if (requestToProcess.requestType === 'issue') {
+      setIssueRequests((prev) => prev.filter((req) => req.id !== requestToProcess.id));
+    } else {
+      setRevokeRequests((prev) => prev.filter((req) => req.id !== requestToProcess.id));
+    }
+
+    // 알림 생성
+    if (processType === 'approve') {
       pushNotif(
         '요청 승인 완료',
         `${requestToProcess.userName}님의 ${requestToProcess.certificateName} ${getRequestTypeText(
@@ -508,13 +529,6 @@ export default function AdminCertificateRequestsPage() {
         )} 요청이 승인되었습니다.`
       );
     } else {
-      // 거절 - 사유와 함께 처리
-      if (requestToProcess.requestType === 'issue') {
-        setIssueRequests((prev) => prev.filter((req) => req.id !== requestToProcess.id));
-      } else {
-        setRevokeRequests((prev) => prev.filter((req) => req.id !== requestToProcess.id));
-      }
-
       pushNotif(
         '요청 거절 완료',
         `${requestToProcess.userName}님의 ${requestToProcess.certificateName} ${getRequestTypeText(
@@ -522,6 +536,12 @@ export default function AdminCertificateRequestsPage() {
         )} 요청이 거절되었습니다.`
       );
     }
+
+    // storage 이벤트 발생시켜서 대시보드 실시간 업데이트
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'admin_processed_requests',
+      newValue: JSON.stringify(updatedProcessed.slice(0, 50))
+    }));
 
     // 모달 닫기
     closeProcessModal();

@@ -132,13 +132,20 @@ export default function Sidebar() {
     {
       title: '사용자 관리',
       items: [
-        { href: '/admin/users', label: '사용자 정보 이력' }
+        { href: '/admin/userhistory', label: '사용자 정보 이력' }
+      ]
+    },
+    {
+      title: '통계 관리',
+      items: [
+        { href: '/admin/users', label: '수료증 통계 이력' }
       ]
     },
     {
       title: '계정 관리',
       items: [
-        { href: '/admin/profile', label: '내 정보' }
+        { href: '/admin/profile', label: '내 정보'},
+        { href: '/admin/edit', label: '정보 수정' }
       ]
     }
   ];
@@ -183,7 +190,7 @@ export default function Sidebar() {
       >
         {/* 상단 로고 */}
         <div className="flex items-center justify-center h-16 border-b border-gray-200">
-          <Link href="/dashboard">
+          <Link href="/admin/dashboard">
             <span className="text-2xl font-bold text-rose-600 tracking-tight">
               Sealium
             </span>
@@ -192,7 +199,7 @@ export default function Sidebar() {
 
         {/* 모바일 헤더 */}
         <div className="lg:hidden flex items-center justify-between p-4 border-b border-gray-200">
-          <Link href="/dashboard">
+          <Link href="/admin/dashboard">
             <span className="text-xl font-bold text-rose-600 tracking-tight">
               Sealium
             </span>
